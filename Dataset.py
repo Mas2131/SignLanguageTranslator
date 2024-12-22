@@ -18,7 +18,7 @@ import preprocess_utils
 
 PATH = './archive/LIS-fingerspelling-dataset/'
 
-#My PC is not cuda compatible, therefore I disabled all the GPU related warning
+#My PC is not cuda compatible, therefore I disabled the GPU and the related warning
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -28,6 +28,7 @@ def load_dataset():
     #    for filename in filenames:
     #        print(os.path.join(dirname, filename))
 
+    # Create lookup tables to map labels to integer (and viceversa)
     lookup = dict()
     reverselookup = dict()
     step = 0
@@ -45,6 +46,8 @@ def load_dataset():
     labels = []
 
     n_data = 0
+
+    # Creates labels for the data
     for i in os.listdir(PATH):
         if i != 'readme.txt':
             step = 0
@@ -75,11 +78,10 @@ def load_dataset():
     #print("Labels shape: ", labels_new.shape)
     #print("Sample lables (categorical): ", labels_categorical[:5])
 
-
+    # Split the data into two sets for training and testing. The testing set will later be split again for validation and testing
     #Training set: used for fitting the model. 60% of the dataset
     #Validation set: used to provide unbiased evaluation of the fitted model. 30% of the dataset
     #Testing set: used to test the unbiased estimation of the fitted model. 10% of the dataset
 
-    train_data, test_data, train_label, test_label = train_test_split(reshaped_data, labels_categorical, test_size = 0.2, random_state=1, shuffle= True, stratify=labels_categorical)
-
+    train_data, test_data, train_label, test_label = train_test_split(reshaped_data, labels_categorical, test_size = 0.1, random_state=1, shuffle= True, stratify=labels_categorical)
     return train_data, test_data, train_label, test_label
