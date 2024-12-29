@@ -6,7 +6,15 @@ import argparse
 #For LIS
 #Dataset has been reduced to test if the model is working
 n_letters = 10
-FILE_PATH = 'LIS_model.h5'
+FILE_PATH = 'LIS_model.keras'
+
+#For BLS
+#n_letters = 10
+#FILE_PATH = 'LSS_model.h5'
+
+#For ASL
+#n_letters = 10
+#FILE_PATH = 'LIS_model.h5'
 
 
 # To prevent retraining the model every time the code is run, 
@@ -14,11 +22,10 @@ FILE_PATH = 'LIS_model.h5'
 # This has been learned during the Reinforcement Learning course
 
 def test():
-    model = VGGNet(n_letters)
-    model.load(FILE_PATH)
+    model = VGGNet.load(FILE_PATH, n_letters)
     _, test_data, _, test_labels = load_dataset()
     print('Test subset: ')
-    loss, accuracy = model.evaluate(test_data, test_labels)
+    loss, accuracy = model.model.evaluate(test_data, test_labels)
     print("Loss: ", loss, "Accuracy: ", accuracy)
 
 

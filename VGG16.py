@@ -9,6 +9,8 @@ from keras.applications.vgg16 import VGG16
 
 # An accuracy threshold help preventing overfitting
 threshold = 98e-2
+BATCH_SIZE = 16
+EPOCHS_SIZE = 10
 
 class CallbackOverfitPrevention(Callback):
     def prevent_overfitting(self, epoch, logs = None):
@@ -80,7 +82,9 @@ class VGGNet(keras.Model):
         self.shape = (IMG_SIZE, IMG_SIZE, 3)
         self.letters = n_letters
         self.model = None
+        self.build_model()
 
+    def build_model(self):
         alpha = 1e-4 #Learning rate
         
         # weights='imagenet' fetches the pretrained hyperparameters
@@ -108,8 +112,8 @@ class VGGNet(keras.Model):
 
         fitted_model = model.fit(
             train_set,
-            steps_per_epoch = 4, #Reduced epocs dor testing if the dataset is working
-            epochs = 5, #Reduced epocs dor testing if the dataset is working
+            steps_per_epoch = 2, #Reduced epocs dor testing if the dataset is working
+            epochs = EPOCHS_SIZE, #Reduced epocs dor testing if the dataset is working
             validation_data = validation_set,
             validation_steps= 2,    #Reduced epocs dor testing if the dataset is working
             callbacks= [CallbackOverfitPrevention()]
@@ -119,10 +123,13 @@ class VGGNet(keras.Model):
     
     # Save the weights of the model
     def save(self, file_path):
-        self.save_weights(file_path, overwrite = True)
+        #self.model.save(file_path, overwrite = True) working but using format .keras gives problems during the evaluation
+        self.model.save_weights(file_path, overwrite = True)
 
     #Loads the weights of the model for evaluation
-    def load(model, file_path):
-        model.load_weights(file_path, skip_mismatch=False)
-        return model
+    def load(file_path, n_letters):
+        model_instance = VGGNet(n_letters)
+        #model_instance.build_model()  # Ensure the model is initialized
+        model_instance.model.load_weights(file_path, skip_mismatch=False)
+        return model_instance
         
