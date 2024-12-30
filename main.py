@@ -6,15 +6,16 @@ import argparse
 #For LIS
 #Dataset has been reduced to test if the model is working
 n_letters = 10
-FILE_PATH = 'LIS_model.keras'
+FILE_PATH = 'VGG_LIS_model.keras'
+DATASET_PATH = './archive/LIS-fingerspelling-dataset/'
 
-#For BLS
+#For BSL
 #n_letters = 10
-#FILE_PATH = 'LSS_model.h5'
+#FILE_PATH = 'VGG_BSL_model.keras'
 
 #For ASL
 #n_letters = 10
-#FILE_PATH = 'LIS_model.h5'
+#FILE_PATH = 'VGG_ASL_model.keras'
 
 
 # To prevent retraining the model every time the code is run, 
@@ -23,7 +24,7 @@ FILE_PATH = 'LIS_model.keras'
 
 def test():
     model = VGGNet.load(FILE_PATH, n_letters)
-    _, test_data, _, test_labels = load_dataset()
+    _, test_data, _, test_labels = load_dataset(DATASET_PATH)
     print('Test subset: ')
     loss, accuracy = model.model.evaluate(test_data, test_labels)
     print("Loss: ", loss, "Accuracy: ", accuracy)
