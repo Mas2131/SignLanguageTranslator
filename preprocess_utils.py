@@ -14,6 +14,7 @@ IMG_SIZE = 150
 #Resize and normalize the images
 def preprocess(image_path):
     img = cv2.imread(image_path, cv2.COLOR_BGR2RGB)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
 
     return img

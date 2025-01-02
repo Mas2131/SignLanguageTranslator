@@ -4,12 +4,12 @@ def generators(train_images, train_labels, batch_size=8):
     # Define the augmentation parameters
     # Apply the augmentation to the training data
     train_datagen = ImageDataGenerator(
-        rescale=1. / 255,
+        #rescale=1. / 255, no need to rescale since images are already normalized
         rotation_range=20,
         horizontal_flip=True,
-        shear_range=0.2,
-        fill_mode='wrap',
-        validation_split=0.3 #Half the training set is the validation set
+        shear_range = 0.2,
+        fill_mode = 'wrap',
+        validation_split = 0.3 #To check 
     )
 
     # Apply the augmentation to the training data

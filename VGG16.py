@@ -1,4 +1,7 @@
 import keras, os
+import numpy as np
+
+# To create network from scratch
 from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Conv2D, MaxPool2D, Flatten
 from keras.callbacks import Callback
@@ -7,6 +10,11 @@ from generators import generators
 #To use a pre-trained Network, saving time 
 from keras.applications.vgg16 import VGG16
 
+# To evaluate the model
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+
 # An accuracy threshold help preventing overfitting
 threshold = 98e-2
 BATCH_SIZE = 16
@@ -14,7 +22,7 @@ EPOCHS_SIZE = 10
 
 class CallbackOverfitPrevention(Callback):
     def prevent_overfitting(self, epoch, logs = None):
-        if(logs.ger('accuracy') >= threshold):
+        if(logs.get('accuracy') >= threshold):
             print("Model is probably overfittes. Training has stopped")
             self.model.stop_training = True
 
@@ -69,7 +77,7 @@ class CNNNetwork(keras.Model):
         self.dropout2 = Dropout(0.5)
         self.dense3 = Dense(n_letters, activation='softmax')
 
-        self.build(None, IMG_SIZE, IMG_SIZE, 1)
+        self.build(None, IMG_SIZE, IMG_SIZE, 3)
 
         self.compile(keras.optimizers.Adam(learning_rate= alpha), loss = 'categorical_crossentropy', metrics =['accuracy'] )
         self.summary()
@@ -112,15 +120,66 @@ class VGGNet(keras.Model):
 
         fitted_model = model.fit(
             train_set,
-            steps_per_epoch = 2, #Reduced epocs dor testing if the dataset is working
+            batch_size= BATCH_SIZE,
             epochs = EPOCHS_SIZE, #Reduced epocs dor testing if the dataset is working
             validation_data = validation_set,
-            validation_steps= 2,    #Reduced epocs dor testing if the dataset is working
             callbacks= [CallbackOverfitPrevention()]
         )
 
+        history = fitted_model.history
+
+        # Plot training & validation accuracy
+        plt.figure(figsize=(12, 6))
+
+# Accuracy plot
+        plt.subplot(1, 2, 1)
+        plt.plot(history['accuracy'], label='Training Accuracy')
+        plt.plot(history['val_accuracy'], label='Validation Accuracy')
+        plt.title('Training and Validation Accuracy')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.legend()
+
+# Loss plot
+        plt.subplot(1, 2, 2)
+        plt.plot(history['loss'], label='Training Loss')
+        plt.plot(history['val_loss'], label='Validation Loss')
+        plt.title('Training and Validation Loss')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.legend()
+
+# Show plots
+        plt.tight_layout()
+        plt.show()
         return fitted_model
     
+    def plot_confusion_matrix(self, y_true, y_pred, classes):
+        if y_true.ndim > 1:
+            y_true = np.argmax(y_true, axis=1)
+        if y_pred.ndim > 1:
+            y_pred = np.argmax(y_pred, axis=1)
+        # Compute confusion matrix
+        cm = confusion_matrix(y_true, y_pred, normalize="true")
+
+        fig, ax = plt.subplots(figsize=(10, 8))
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
+        disp.plot(cmap=plt.cm.Blues, ax=ax, values_format=".2f")
+        plt.title("Normalized Confusion Matrix")
+        plt.show()
+    
+    def test(self, test_data, test_labels, classes):
+        results = self.model.evaluate(test_data, test_labels, batch_size=2)
+        print("Evaluation results:", results)
+        y_prediction = self.model.predict(test_data)
+
+        print("y_true:", test_labels)
+        print("classes:", classes)
+        print("y_pred:", y_prediction)
+        self.plot_confusion_matrix(test_labels, y_prediction, classes)
+
+
+
     # Save the weights of the model
     def save(self, file_path):
         #self.model.save(file_path, overwrite = True) working but using format .keras gives problems during the evaluation
@@ -128,8 +187,7 @@ class VGGNet(keras.Model):
 
     #Loads the weights of the model for evaluation
     def load(file_path, n_letters):
-        model_instance = VGGNet(n_letters)
-        #model_instance.build_model()  # Ensure the model is initialized
-        model_instance.model.load_weights(file_path, skip_mismatch=False)
-        return model_instance
-        
+        model = VGGNet(n_letters)
+        model.model.load_weights(file_path, skip_mismatch=False)
+        model.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        return model

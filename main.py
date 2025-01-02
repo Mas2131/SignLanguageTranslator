@@ -3,11 +3,17 @@ from generators import generators
 from VGG16 import *
 import argparse
 
+
+#My PC is not cuda compatible, therefore I disabled the GPU and the related warning
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 #For LIS
 #Dataset has been reduced to test if the model is working
 n_letters = 10
 FILE_PATH = 'VGG_LIS_model.keras'
 DATASET_PATH = './archive/LIS-fingerspelling-dataset/'
+CLASSES = ["a", "c", "e", "k", "l", "o", "p", "r", "v", "y"]
 
 #For BSL
 #n_letters = 10
@@ -25,14 +31,12 @@ DATASET_PATH = './archive/LIS-fingerspelling-dataset/'
 def test():
     model = VGGNet.load(FILE_PATH, n_letters)
     _, test_data, _, test_labels = load_dataset(DATASET_PATH)
-    print('Test subset: ')
-    loss, accuracy = model.model.evaluate(test_data, test_labels)
-    print("Loss: ", loss, "Accuracy: ", accuracy)
+    model.test(test_data, test_labels, CLASSES)
 
 
 def train():
     model = VGGNet(n_letters)
-    train_data, _, train_label, _ = load_dataset()
+    train_data, _, train_label, _ = load_dataset(DATASET_PATH)
     model.training(train_data, train_label)
     model.save(FILE_PATH)
 
