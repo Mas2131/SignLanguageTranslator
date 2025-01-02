@@ -167,6 +167,10 @@ class VGGNet(keras.Model):
         disp.plot(cmap=plt.cm.Blues, ax=ax, values_format=".2f")
         plt.title("Normalized Confusion Matrix")
         plt.show()
+
+        # Save cf image
+        plt.savefig('Confusion matrix VGG')  
+        plt.close()  
     
     def test(self, test_data, test_labels, classes):
         results = self.model.evaluate(test_data, test_labels, batch_size=2)
