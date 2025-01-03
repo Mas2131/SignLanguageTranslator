@@ -65,12 +65,7 @@ def main():
 
     if args.evaluate:
         test()
-    gpus = tf.config.list_physical_devices('GPU')
-    # Check if GPU is being used
-    if gpus:
-        print("Yes GPU")
-    else:
-        print("No GPU")
+    
 
 # Run the main function
 if __name__ == "__main__":
