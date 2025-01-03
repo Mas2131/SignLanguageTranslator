@@ -17,8 +17,8 @@ import matplotlib.pyplot as plt
 
 # An accuracy threshold help preventing overfitting
 threshold = 98e-2
-BATCH_SIZE = 16
-EPOCHS_SIZE = 10
+BATCH_SIZE = 16 #32 #64
+EPOCHS_SIZE = 10 #15 #20
 
 class CallbackOverfitPrevention(Callback):
     def prevent_overfitting(self, epoch, logs = None):
@@ -131,7 +131,7 @@ class VGGNet(keras.Model):
         # Plot training & validation accuracy
         plt.figure(figsize=(12, 6))
 
-# Accuracy plot
+        # Accuracy plot
         plt.subplot(1, 2, 1)
         plt.plot(history['accuracy'], label='Training Accuracy')
         plt.plot(history['val_accuracy'], label='Validation Accuracy')
@@ -140,7 +140,7 @@ class VGGNet(keras.Model):
         plt.ylabel('Accuracy')
         plt.legend()
 
-# Loss plot
+        # Loss plot
         plt.subplot(1, 2, 2)
         plt.plot(history['loss'], label='Training Loss')
         plt.plot(history['val_loss'], label='Validation Loss')
@@ -149,7 +149,7 @@ class VGGNet(keras.Model):
         plt.ylabel('Loss')
         plt.legend()
 
-# Show plots
+        # Show plots
         plt.tight_layout()
         plt.show()
         return fitted_model

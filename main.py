@@ -3,17 +3,17 @@ from generators import generators
 from VGG16 import *
 import argparse
 
+import tensorflow as tf
 
 #My PC is not cuda compatible, therefore I disabled the GPU and the related warning
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+#os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 #For LIS
-#Dataset has been reduced to test if the model is working
-n_letters = 10
+n_letters = 22
 FILE_PATH = 'VGG_LIS_model.keras'
 DATASET_PATH = './archive/LIS-fingerspelling-dataset/'
-CLASSES = ["a", "c", "e", "k", "l", "o", "p", "r", "v", "y"]
+CLASSES = ["a", "b", "c", "d", "e", "f", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "t", "u", "v", "w", "x" "y"]
 
 #For BSL
 #n_letters = 10
@@ -65,6 +65,12 @@ def main():
 
     if args.evaluate:
         test()
+    gpus = tf.config.list_physical_devices('GPU')
+    # Check if GPU is being used
+    if gpus:
+        print("Yes GPU")
+    else:
+        print("No GPU")
 
 # Run the main function
 if __name__ == "__main__":
