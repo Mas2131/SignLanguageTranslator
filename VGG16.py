@@ -1,4 +1,4 @@
-import keras, os
+import keras
 import numpy as np
 
 # To create network from scratch
@@ -19,7 +19,10 @@ import matplotlib.pyplot as plt
 threshold = 98e-2
 BATCH_SIZE = 16 #32 #64
 EPOCHS_SIZE = 10 #15 #20
+alpha = 1e-4 #Learning rate
 
+
+# To prevent overfitting, the training is stopped when it reaches 98% of accuracy
 class CallbackOverfitPrevention(Callback):
     def prevent_overfitting(self, epoch, logs = None):
         if(logs.get('accuracy') >= threshold):
@@ -79,11 +82,19 @@ class CNNNetwork(keras.Model):
 
         self.build(None, IMG_SIZE, IMG_SIZE, 3)
 
-        self.compile(keras.optimizers.Adam(learning_rate= alpha), loss = 'categorical_crossentropy', metrics =['accuracy'] )
+        self.model.compile(keras.optimizers.Adam(learning_rate= alpha), loss = 'categorical_crossentropy', 
+                           metrics =[keras.metrics.Accuracy(),
+                                     keras.metrics.FalsePositives(),
+                                     keras.metrics.FalseNegatives(),
+                                     keras.metrics.TruePositives(),
+                                     keras.metrics.TrueNegatives(),
+                                     keras.metrics.Recall(),
+                                     keras.metrics.Precision()] )
+        
         self.summary()
 """
 
-#With pretrained Network
+# With pretrained Network
 class VGGNet(keras.Model):
     def __init__(self, n_letters):
         super(VGGNet, self).__init__()
@@ -92,9 +103,7 @@ class VGGNet(keras.Model):
         self.model = None
         self.build_model()
 
-    def build_model(self):
-        alpha = 1e-4 #Learning rate
-        
+    def build_model(self):        
         # weights='imagenet' fetches the pretrained hyperparameters
         vgg16 = VGG16(weights='imagenet', input_shape=self.shape, classes= self.letters, include_top= False)
         
@@ -109,22 +118,32 @@ class VGGNet(keras.Model):
         predictions = Dense(self.letters, activation='softmax')(x)
 
         self.model = Model(inputs=vgg16.input, outputs=predictions)
-        self.model.compile(keras.optimizers.Adam(learning_rate= alpha), loss = 'categorical_crossentropy', metrics =['accuracy'] )
+        self.model.compile(keras.optimizers.Adam(learning_rate= alpha), loss = 'categorical_crossentropy', 
+                           metrics =['accuracy',
+                                     keras.metrics.FalsePositives(),
+                                     keras.metrics.FalseNegatives(),
+                                     keras.metrics.TruePositives(),
+                                     keras.metrics.TrueNegatives(),
+                                     keras.metrics.Recall(),
+                                     keras.metrics.Precision()] )
+
         
-    def training(self, train_data, train_labels):
-        # Debug
+    def training(self, train_data, train_labels, file_path):
         model = self.model 
-        model.summary()
+        # Debugging
+        # model.summary()
 
         train_set, validation_set = generators(train_data, train_labels)
 
         fitted_model = model.fit(
             train_set,
             batch_size= BATCH_SIZE,
-            epochs = EPOCHS_SIZE, #Reduced epocs dor testing if the dataset is working
+            epochs = EPOCHS_SIZE, 
             validation_data = validation_set,
             callbacks= [CallbackOverfitPrevention()]
         )
+        
+        model.save(file_path)
 
         history = fitted_model.history
 
@@ -159,54 +178,40 @@ class VGGNet(keras.Model):
             y_true = np.argmax(y_true, axis=1)
         if y_pred.ndim > 1:
             y_pred = np.argmax(y_pred, axis=1)
+
         # Compute confusion matrix
         cm = confusion_matrix(y_true, y_pred, normalize="true")
 
-        fig, ax = plt.subplots(figsize=(10, 8))
+        fig, ax = plt.subplots(figsize=(12, 10))
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
-        disp.plot(cmap=plt.cm.Greens, ax=ax, values_format=".2f")
-        plt.title("Normalized Confusion Matrix")
+        disp.plot(cmap=plt.cm.YlGn, ax=ax, values_format=".2f")
+
+        # Adjust font size for better readibility
+        plt.setp(ax.get_xticklabels(), fontsize=10)  
+        plt.setp(ax.get_yticklabels(), fontsize=10)  
+        for labels in ax.texts:  
+            labels.set_fontsize(8)
+        plt.title("Normalized Confusion Matrix", fontsize = 16)
+
+        # To prevent overlapping
+        plt.tight_layout()
         plt.show()
 
         # Save cf image
-        plt.savefig('Confusion matrix VGG')  
-        plt.close()  
+        plt.savefig('Confusion_matrix_VGG.png')  
+        plt.close()
+        
     
     def test(self, test_data, test_labels, classes):
-        accuracy, loss = self.model.evaluate(test_data, test_labels, batch_size=2)
+        results = self.model.evaluate(test_data, test_labels, batch_size= BATCH_SIZE)
+        #print("Evaluation results:", results)
         y_prediction = self.model.predict(test_data)
-
-        print("y_true:", test_labels)
-        print("classes:", classes)
-        print("y_pred:", y_prediction)
+        # Debugging
+        #print("y_true:", test_labels)
+        #print("classes:", classes)
+        #print("y_pred:", y_prediction)
         self.plot_confusion_matrix(test_labels, y_prediction, classes)
-        # We can get False Positive, False Negatives, True Positives and True negatives drom the confusion matrix
-        # False positives
-        FP = confusion_matrix.sum(axis=0) - np.diag(confusion_matrix)  
-        
-        # False Negatives
-        FN = confusion_matrix.sum(axis=1) - np.diag(confusion_matrix)
-        
-        #True positives
-        TP = np.diag(confusion_matrix)
-        
-        # True Negatives
-        TN = confusion_matrix.values.sum() - (FP + FN + TP)
-
-        # Sensitivity/Recall/true positive rate
-        TPR = TP/(TP+FN)
-        
-        # Precision or positive predictive value
-        PPV = TP/(TP+FP)
-        
-        print("Accuracy: ", accuracy,
-            "False positives: ", FP, 
-              "False negatives: ", FN, 
-              "True positives: ", TP,
-              "True negatives: ", TN,
-              "Recall: ", TPR,
-              "Precision: ", PPV)
-
+        return results
 
 
     # Save the weights of the model
@@ -218,5 +223,13 @@ class VGGNet(keras.Model):
     def load(file_path, n_letters):
         model = VGGNet(n_letters)
         model.model.load_weights(file_path, skip_mismatch=False)
-        model.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        model.model.compile(keras.optimizers.Adam(learning_rate= alpha), loss = 'categorical_crossentropy', 
+                           metrics =['accuracy',
+                                     keras.metrics.FalsePositives(),
+                                     keras.metrics.FalseNegatives(),
+                                     keras.metrics.TruePositives(),
+                                     keras.metrics.TrueNegatives(),
+                                     keras.metrics.Recall(),
+                                     keras.metrics.Precision()] )
+        
         return model
