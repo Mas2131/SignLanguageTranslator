@@ -164,7 +164,7 @@ class VGGNet(keras.Model):
 
         fig, ax = plt.subplots(figsize=(10, 8))
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
-        disp.plot(cmap=plt.cm.Blues, ax=ax, values_format=".2f")
+        disp.plot(cmap=plt.cm.Greens, ax=ax, values_format=".2f")
         plt.title("Normalized Confusion Matrix")
         plt.show()
 
@@ -173,14 +173,39 @@ class VGGNet(keras.Model):
         plt.close()  
     
     def test(self, test_data, test_labels, classes):
-        results = self.model.evaluate(test_data, test_labels, batch_size=2)
-        print("Evaluation results:", results)
+        accuracy, loss = self.model.evaluate(test_data, test_labels, batch_size=2)
         y_prediction = self.model.predict(test_data)
 
         print("y_true:", test_labels)
         print("classes:", classes)
         print("y_pred:", y_prediction)
         self.plot_confusion_matrix(test_labels, y_prediction, classes)
+        # We can get False Positive, False Negatives, True Positives and True negatives drom the confusion matrix
+        # False positives
+        FP = confusion_matrix.sum(axis=0) - np.diag(confusion_matrix)  
+        
+        # False Negatives
+        FN = confusion_matrix.sum(axis=1) - np.diag(confusion_matrix)
+        
+        #True positives
+        TP = np.diag(confusion_matrix)
+        
+        # True Negatives
+        TN = confusion_matrix.values.sum() - (FP + FN + TP)
+
+        # Sensitivity/Recall/true positive rate
+        TPR = TP/(TP+FN)
+        
+        # Precision or positive predictive value
+        PPV = TP/(TP+FP)
+        
+        print("Accuracy: ", accuracy,
+            "False positives: ", FP, 
+              "False negatives: ", FN, 
+              "True positives: ", TP,
+              "True negatives: ", TN,
+              "Recall: ", TPR,
+              "Precision: ", PPV)
 
 
 
