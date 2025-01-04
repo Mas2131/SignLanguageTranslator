@@ -8,7 +8,7 @@ def generators(train_images, train_labels, batch_size=8):
         horizontal_flip=True,
         shear_range = 0.2,
         fill_mode = 'wrap',
-        validation_split = 0.75
+        validation_split = 0.33
     )
 
     # Apply the augmentation to the training data

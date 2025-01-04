@@ -62,8 +62,8 @@ def main():
         #print(f"Test data shape: {test_data.shape}")
         #print(f"Train labels shape: {train_label.shape}")
         #print(f"Test labels shape: {test_label.shape}")
-        print("Train set dimension: ", train_generator.n)
-        print("Test set dimension: ", test_data.n)
+        print("Train set dimension: ", train_generator.n) 
+        print("Test set dimension: ", test_data.ndim)
         print("Validation set dimension: ", validation_generator.n)
     except Exception as e:
         print(f"An error occurred: {e}")

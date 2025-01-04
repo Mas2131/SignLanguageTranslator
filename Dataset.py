@@ -81,6 +81,6 @@ def load_dataset(path):
     #Testing set: used to test the unbiased estimation of the fitted model. 10% of the dataset
 
     train_data, test_data, train_label, test_label = train_test_split(reshaped_data, labels_categorical, test_size = 0.1, random_state=1, shuffle= True, stratify=labels_categorical)
-    print("Training data shape: ", train_data.shape, "Training labels shape: ", train_label.shape)
-    print("Testing data shape: ", test_data.shape, "Testing labels sape: ", test_label.shape)
+    #print("Training data shape: ", train_data.shape, "Training labels shape: ", train_label.shape)
+    #print("Testing data shape: ", test_data.shape, "Testing labels sape: ", test_label.shape)
     return train_data, test_data, train_label, test_label
