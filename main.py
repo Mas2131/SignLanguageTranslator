@@ -12,7 +12,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 n_letters = 22
 FILE_PATH = 'VGG_LIS_model.keras'
 DATASET_PATH = './archive/LIS-fingerspelling-dataset/'
-CLASSES = ["a", "b", "c", "d", "e", "f", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "t", "u", "v", "w", "x" "y"]
+CLASSES = ["a", "b", "c", "d", "e", "f", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "t", "u", "v", "w", "x", "y"]
 
 
 #For BSL
@@ -53,23 +53,26 @@ def train():
 
 #Prints for debugging
 def main():
-    print("Starting dataset loading...")
-    """
+    print("Starting dataset loading")
+    
     try:
         train_data, test_data, train_label, test_label = load_dataset()
         train_generator, validation_generator =  generators(train_data, train_label)
-        print("Dataset loaded successfully!")
-        print(f"Train data shape: {train_data.shape}")
-        print(f"Test data shape: {test_data.shape}")
-        print(f"Train labels shape: {train_label.shape}")
-        print(f"Test labels shape: {test_label.shape}")
+        #print(f"Train data shape: {train_data.shape}")
+        #print(f"Test data shape: {test_data.shape}")
+        #print(f"Train labels shape: {train_label.shape}")
+        #print(f"Test labels shape: {test_label.shape}")
+        print("Train set dimension: ", train_generator.n)
+        print("Test set dimension: ", test_data.n)
+        print("Validation set dimension: ", validation_generator.n)
     except Exception as e:
         print(f"An error occurred: {e}")
-    """
     parser = argparse.ArgumentParser(description='Run training and testing')
     parser.add_argument('-t', '--train', action='store_true')
     parser.add_argument('-e', '--evaluate', action='store_true')
     args = parser.parse_args()
+
+    print("Dataset loaded correctly")
 
     if args.train:
         train()

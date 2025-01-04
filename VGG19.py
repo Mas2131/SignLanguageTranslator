@@ -8,7 +8,7 @@ from keras.callbacks import Callback
 from preprocess_utils import IMG_SIZE
 from generators import generators
 #To use a pre-trained Network, saving time 
-from keras.applications.vgg16 import VGG16
+from keras.applications.vgg19 import VGG19
 
 # To evaluate the model
 from sklearn.metrics import confusion_matrix
@@ -30,74 +30,10 @@ class CallbackOverfitPrevention(Callback):
             self.model.stop_training = True
 
 
-
-"""
-#Builg from sctratch
-class CNNNetwork(keras.Model):
-    #Since 2 letters in the LIS alphabet require movement,
-    #we will consider only 22 letters
-    def __init__(self, n_letters):
-        super().__init__()
-
-        #Some hyperparameters
-        alpha = 1e-4 #Learning rate
-        self = Sequential()
-
-        #Network
-        #First block
-        self.conv11 = Conv2D(64, (3, 3), activation='relu', padding = 'same', input_shape=(IMG_SIZE, IMG_SIZE, 1))
-        self.conv12 = Conv2D(64, (3, 3), activation='relu', padding = 'same')
-        self.pool1 = MaxPool2D((2, 2))
-
-        #Second block
-        self.conv21 = Conv2D(128, (3, 3), activation='relu', padding = 'same')
-        self.conv22 = Conv2D(128, (3, 3), activation='relu',  padding = 'same')
-        self.pool2 = MaxPool2D((2, 2))
-
-        #Third block
-        self.conv31 = Conv2D(256, (3, 3), activation='relu', padding = 'same')
-        self.conv32 = Conv2D(256, (3, 3), activation='relu', padding = 'same')
-        self.conv33 = Conv2D(256, (3, 3), activation='relu', padding = 'same')
-        self.pool3 = MaxPool2D((2, 2))
-
-        #Fourth block
-        self.conv41 = Conv2D(512, (3, 3), activation='relu', padding = 'same')
-        self.conv42 = Conv2D(512, (3, 3), activation='relu', padding = 'same')
-        self.conv43 = Conv2D(512, (3, 3), activation='relu', padding = 'same')
-        self.pool4 = MaxPool2D((2, 2))
-
-        #Fifth block
-        self.conv51 = Conv2D(512, (3, 3), activation='relu', padding = 'same')
-        self.conv52 = Conv2D(512, (3, 3), activation='relu', padding = 'same')
-        self.conv53 = Conv2D(512, (3, 3), activation='relu', padding = 'same')
-        self.pool5 = MaxPool2D((2, 2))
-
-        # Fully connected layers
-        self.flatten = Flatten()
-        self.dense1 = Dense(4096, activation='relu')
-        self.dropout1 = Dropout(0.5)
-        self.dense2 = Dense(4096, activation='relu')
-        self.dropout2 = Dropout(0.5)
-        self.dense3 = Dense(n_letters, activation='softmax')
-
-        self.build(None, IMG_SIZE, IMG_SIZE, 3)
-
-        self.model.compile(keras.optimizers.Adam(learning_rate= alpha), loss = 'categorical_crossentropy', 
-                           metrics =[keras.metrics.Accuracy(),
-                                     keras.metrics.FalsePositives(),
-                                     keras.metrics.FalseNegatives(),
-                                     keras.metrics.TruePositives(),
-                                     keras.metrics.TrueNegatives(),
-                                     keras.metrics.Recall(),
-                                     keras.metrics.Precision()] )
-        
-        self.summary()
-"""
-
 # With pretrained Network
-class VGGNet(keras.Model):
+class VGG19Net(keras.Model):
     def __init__(self, n_letters):
-        super(VGGNet, self).__init__()
+        super(VGG19Net, self).__init__()
         self.shape = (IMG_SIZE, IMG_SIZE, 3)
         self.letters = n_letters
         self.model = None
@@ -105,19 +41,20 @@ class VGGNet(keras.Model):
 
     def build_model(self):        
         # weights='imagenet' fetches the pretrained hyperparameters
-        vgg16 = VGG16(weights='imagenet', input_shape=self.shape, classes= self.letters, include_top= False)
+        vgg19 = VGG19(weights='imagenet', input_shape=self.shape, classes= self.letters, include_top= False)
         
+        # Need to add some layers since we have 
         # Freezes the weights so that are not retrained, saving time
-        for layer in vgg16.layers:
+        for layer in vgg19.layers:
             layer.trainable = False
         
         # When working with a pretrained model, we only need to change the last layer:
-        x = Flatten()(vgg16.output)
+        x = Flatten()(vgg19.output)
         x = Dense(256, activation='relu')(x)
         x = Dropout(0.5)(x)
         predictions = Dense(self.letters, activation='softmax')(x)
 
-        self.model = Model(inputs=vgg16.input, outputs=predictions)
+        self.model = Model(inputs=vgg19.input, outputs=predictions)
         self.model.compile(keras.optimizers.Adam(learning_rate= alpha), loss = 'categorical_crossentropy', 
                            metrics =['accuracy',
                                      keras.metrics.FalsePositives(),
@@ -154,7 +91,7 @@ class VGGNet(keras.Model):
         plt.subplot(1, 2, 1)
         plt.plot(history['accuracy'], label='Training Accuracy')
         plt.plot(history['val_accuracy'], label='Validation Accuracy')
-        plt.title('Training and Validation Accuracy')
+        plt.title('VGG19 Training and Validation Accuracy')
         plt.xlabel('Epochs')
         plt.ylabel('Accuracy')
         plt.legend()
@@ -163,7 +100,7 @@ class VGGNet(keras.Model):
         plt.subplot(1, 2, 2)
         plt.plot(history['loss'], label='Training Loss')
         plt.plot(history['val_loss'], label='Validation Loss')
-        plt.title('Training and Validation Loss')
+        plt.title('VGG 19 Training and Validation Loss')
         plt.xlabel('Epochs')
         plt.ylabel('Loss')
         plt.legend()
@@ -184,14 +121,14 @@ class VGGNet(keras.Model):
 
         fig, ax = plt.subplots(figsize=(12, 10))
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
-        disp.plot(cmap=plt.cm.YlGn, ax=ax, values_format=".2f")
+        disp.plot(cmap=plt.cm.BuPu, ax=ax, values_format=".2f")
 
         # Adjust font size for better readibility
         plt.setp(ax.get_xticklabels(), fontsize=10)  
         plt.setp(ax.get_yticklabels(), fontsize=10)  
         for labels in ax.texts:  
             labels.set_fontsize(8)
-        plt.title("Normalized Confusion Matrix", fontsize = 16)
+        plt.title("Normalized Confusion Matrix", font = 16)
 
         # To prevent overlapping
         plt.tight_layout()
