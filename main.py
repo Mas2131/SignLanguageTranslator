@@ -9,19 +9,24 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 #For LIS
-n_letters = 22
-FILE_PATH = 'VGG_LIS_model.keras'
-DATASET_PATH = './archive/LIS-fingerspelling-dataset/'
-CLASSES = ["a", "b", "c", "d", "e", "f", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "t", "u", "v", "w", "x", "y"]
+#n_letters = 22
+#FILE_PATH = 'VGG_LIS_model.keras'
+#DATASET_PATH = './archive/LIS-fingerspelling-dataset/'
+#CLASSES = ["a", "b", "c", "d", "e", "f", "h", "i", "k", "l", "m", "n", "o", "p", "q", "r", "t", "u", "v", "w", "x", "y"]
 
 
 #For BSL
-#n_letters = 10
+#n_letters = 23
 #FILE_PATH = 'VGG_BSL_model.keras'
+#DATASET_PATH = './archive/BLS_dataset/'
+#CLASSES = ["a", "b", "c", "d", "e", "f", "g", "i", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "z"]
+
 
 #For ASL
-#n_letters = 10
+#n_letters = 26
 #FILE_PATH = 'VGG_ASL_model.keras'
+#DATASET_PATH = './archive/ASL-alphabet/'
+#CLASSES = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
 
 # To prevent retraining the model every time the code is run, 
