@@ -95,8 +95,8 @@ From this table, the following observations can be made:
 EfficientNetV2 is a CNN architecture based on MobileNetV2. It employs a scaling method that uniformly adjusts the network's width, depth, and resolution using a set of fixed scaling coefficients. To achieve better accuracy and efficiency, it balances these three dimensions during scaling.
 
 ### Compound Scaling Method
-1. Fix φ = 1 and perform a small grid search to determine the values of α, β, and γ.
-2. Fix α, β, and γ as constants, and scale up the baseline network using different values of φ.
+1. Fix φ = 1 and perform a small grid search to determine the values of α, β and γ.
+2. Fix α, β and γ as constants, and scale up the baseline network using different values of φ.
 
 The equations used to describe depth, width, and resolution are as follows:
 
@@ -111,7 +111,7 @@ The architecture also incorporates squeeze-and-excitation blocks:
 3. **Rescaling:** Adjusts the original feature maps based on the learned channel interdependencies.
 
 ### Results
-- **ASL Dataset:** High performance with minimal differences between batches. The worst-performing batch still achieved results above 0.60.
+- **ASL Dataset:** High performance with minimal differences between batches. The worst-performing batch still achieved results above 0,60.
 - **BSL Dataset:** Slightly lower results compared to ASL but still high overall, with some confusion between letters M and N.
 - **LIS Dataset:** Similar performance to ASL, with tendencies to misclassify F as B and C as O.
 - **Combined Dataset:** High performance across all batches.
