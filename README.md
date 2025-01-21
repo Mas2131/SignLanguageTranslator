@@ -50,7 +50,7 @@ To address class imbalances and differences across datasets, we manipulated the 
 - **ASL(300):** Reduced to 300 images per class.
 - **BSL(1000):** Original dataset with no changes.
 - **BSL(300):** Reduced to 300 images per class.
-- **LIS(300):** Augmented to 300 images per class.
+- **LIS(300):** Based on the number of its samples, each class was augmented or reduced to 300 images per class.
 - **LIS(1000):** Augmented to 1,000 images per class.
 
 ### Combined Dataset
@@ -61,11 +61,11 @@ ResNet50 is a deep learning model launched by Microsoft Research. Its 50-layer a
 
 - Input layer: Accepts (224, 224, 3) tensors (224 × 224 RGB images).
 - Convolutional layer: 7×7 filter, 64 filters, and a stride of 2, to detect features and generate feature maps.
-- 3×3 max pooling layer: Reduces spatial dimensions, retaining important information while reducing computational load.
-- 4 residual blocks: Each with a specific number of units of 1×1 convolution, 3×3 convolution, and 1×1 convolution with variable numbers of filters.
-- Average pooling layer: Reduces the spatial dimensions of the feature maps to a single value per feature, simplifying the architecture.
+- 3×3 max pooling layer: reduces spatial dimensions, retaining important information while reducing computational load.
+- 4 residual blocks: each with a specific number of units of 1×1 convolution, 3×3 convolution, and 1×1 convolution with variable numbers of filters.
+- Average pooling layer: reduces the spatial dimensions of the feature maps to a single value per feature, simplifying the architecture.
 - Fully connected layer with 1,000 neurons.
-- Softmax activation in the output layer: Produces the model's predictions.
+- Softmax activation in the output layer: produces the model's predictions.
 
 The key feature of this model is the use of residual blocks, which connect the activations of previous layers with the next one. This allows the network to skip intermediate layers, mitigating the vanishing/exploding gradient problem, enabling smoother training and faster convergence.
 
@@ -80,11 +80,12 @@ To maximize performance, each of the 7 datasets was tested with 6 trials, varyin
 
 Trials where BatchNormalization layers are unfrozen and Dense regularization with L2 penalty is added generally improve results, especially for large datasets, stabilizing the performance by reducing overfitting.
 
-From this table, the following observations can be made:
+From the various trials, the following results were obtained:
 
 - **LIS(1000):** Achieved high accuracy without the need for a lower learning rate. Its sharp contrast between the hand and the clean and uniform black background made feature extraction straightforward.
 - **LIS(300):** Despite being smaller, also performed well due to the clarity and simplicity of the images.
 - **ASL(1000):** Faced challenges due to lower resolution and poor lighting, leading to low contrast between the hand and background. Using BatchNormalization layers with a lower learning rate allowed the model to adapt slowly to the noise and complexity of the dataset.
+- **ASL(300):** The blurred and low-contrast images were less of an issue since the model was able to "memorize" the limited examples, relying on dataset-specific cues rather than robust generalization.
 - **BSL datasets:** Posed the greatest difficulty due to complex backgrounds and some gestures involving full-body poses or contextual elements. The increased complexity required slower optimization to prevent the model from focusing on irrelevant features in the background.
 - **Combined dataset:** Showcased the model's ability to learn and generalize from diverse input spaces, achieving almost similar results regardless of dataset size (1,000 or 300). Achieved accuracy ranged between 89%-97%, with challenges arising in distinguishing similar gestures:
   - BSL: M/N
@@ -111,7 +112,7 @@ The architecture also incorporates squeeze-and-excitation blocks:
 3. **Rescaling:** Adjusts the original feature maps based on the learned channel interdependencies.
 
 ### Results
-- **ASL Dataset:** High performance with minimal differences between batches. The worst-performing batch still achieved results above 0,60.
+- **ASL Dataset:** High performance with minimal differences between batches. The worst-performing batch still achieved results above 0,90.
 - **BSL Dataset:** Slightly lower results compared to ASL but still high overall, with some confusion between letters M and N.
 - **LIS Dataset:** Similar performance to ASL, with tendencies to misclassify F as B and C as O.
 - **Combined Dataset:** High performance across all batches.
