@@ -140,34 +140,33 @@ MobileNetV2 is a CNN architecture based on an inverted residual structure, where
 ## VGG16 & VGG19
 VGG is a family of deep convolutional neural networks known for its simple architecture. These models vary by depth and number of layers with tunable parameters, offering four variants (11, 13, 16, and 19 layers). Despite differences, they share a common structure:
 
-- **Input layer:** Accepts a colored RGB image (224×224×3 tensor).
-- **Convolutional layers:** Filters with a small receptive field (3×3) and stride of 1, with row and column padding.
-- **Max pooling layers:** Use a 2×2 kernel with a stride of 2 to reduce spatial dimensions.
-- **Fully connected layers:** 3 layers to capture complex patterns.
-- **Output layer:** A softmax activation function for classification.
+- **Input layer:** accepts a colored RGB image (224×224×3 tensor);
+- **Convolutional layers:** filters with a small receptive field (3x3) and stride of 1; the
+resolution is kept after each convolution thanks to row and column padding;
+- **Max pooling layers:** use a 2×2 kernel with a stride of 2 to reduce spatial dimensions;
+- **Fully connected layers:** 3 layers to capture complex patterns;
+- **Output layer:** a softmax activation function for classification.
+The idden layers use the ReLU activation function to introduce non-linearity and enhance
+feature extraction.
 
 ### Results
-1. **LIS(300):** The simpler architecture of VGG16 proved sufficient, with VGG19 showing no significant improvement.
-2. **BSL(300):** Best results were achieved for the 32/15 configuration, with VGG19 resolving common misclassifications (e.g., letter "C").
-3. **ASL(300):** Training with fewer epochs led to underfitting for VGG19, whereas optimal results were observed with the 32/15 configuration.
+1. **LIS(300):** the simpler architecture of VGG16 proved sufficient to model the data, with VGG19 showing no significant improvement;
+2. **BSL(300):** best results were achieved for the 32/15 batch size/epochs number configuration, with VGG19 resolving common misclassifications (e.g., letter "C");
+3. **ASL(300):** training with fewer epochs led to underfitting for VGG19, whereas optimal results were observed with the 32/15 configuration for VGG19 and 64/20 for VGG16;
 4. **Combined Dataset:** VGG16 unexpectedly outperformed VGG19.
 
 ## Final Results
 ### Summary
-- **ResNet50:** Emerged as the top-performing model for both individual and combined datasets.
-- **VGG19:** Consistently achieved second-best performance for individual datasets.
-- **EfficientNetV2:** Demonstrated strong performance for the combined dataset.
+- **ResNet50:** emerged as the top-performing model for both individual and combined datasets.
+- **VGG19 and EfficientNetV2:** achieved second-best performance for individual datasets.
+- **EfficientNetV2:** demonstrated strong performance for the combined dataset.
 
 ### Dataset-Specific Observations
-- **LIS(300):** VGG19 achieved the best performance (accuracy = 0.98), followed by ResNet50 (accuracy = 0.96).
-- **BSL(300):** ResNet50 led with an accuracy of 0.97, while VGG19 performed similarly (accuracy = 0.96).
+- **LIS(300):** VGG19 achieved the best performance (accuracy = 0.98/0.97), followed by ResNet50 (accuracy = 0.96/0.97).
+- **BSL(300):** ResNet50 led with an accuracy of 0.97/0.96, while VGG19 performed similarly (with highest accuracy being 0.96 for 32/15 and lowest being 0.92 for the 16/10 combination).
 - **ASL(300):** ResNet50 outperformed others with an accuracy of 0.96, followed by VGG19.
-- **Combined Dataset:** ResNet50 maintained its robustness, while others showed lower performance (e.g., MobileNetV2 with accuracy < 0.8).
+- **Combined Dataset:** ResNet50 maintained its robustness, closely folloed by EfficientNetV2.
 
-### Recommendations
-- **ResNet50:** For tasks requiring high accuracy and robustness across diverse datasets.
-- **VGG19:** For datasets where deeper feature learning is advantageous.
-- **EfficientNetV2:** A balanced choice for mixed datasets.
 
 ## Works Cited
 1. Grassknoted. ASL Alphabet. Kaggle. [ASL Dataset](https://www.kaggle.com/datasets/grassknoted/asl-alphabet)
