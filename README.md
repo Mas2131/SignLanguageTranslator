@@ -48,7 +48,7 @@ A combined dataset (ASL(300), BSL(300), LIS(300)) was created to enable cross-da
 
 ---
 
-## CNN Architectures
+## Architectures
 
 ### ResNet50
 A deep network with residual connections to address vanishing gradients. Key observations:
