@@ -138,7 +138,7 @@ MobileNetV2 is a CNN architecture based on an inverted residual structure, where
 - **Combined Dataset:** Results were still similar, but the model fails to recognize several letters.
 
 ## VGG16 & VGG19
-VGG is a family of deep convolutional neural networks known for its simple architecture. These models vary by depth and number of layers with tunable parameters, offering four variants (11, 13, 16, and 19 layers). Despite differences, they share a common structure:
+VGG is a family of deep convolutional neural networks known for its simple architecture. These models vary by depth and number of layers with tunable parameters, offering four variants (11, 13, 16,c and 19 layers). Despite differences, they share a common structure:
 
 - **Input layer:** accepts a colored RGB image (224×224×3 tensor);
 - **Convolutional layers:** filters with a small receptive field (3x3) and stride of 1; the
