@@ -41,7 +41,7 @@ The letters that were not represented in the dataset (H, J, Y for the BSL and G,
 
 The BSL dataset, due to the considerable size of its files, has been modified using `Dataset_Resizing.py`: the files have been converted from `.png` to `.jpg`, with their size reduced by 75%.
 
-Due to GitHub limitations on file size, the datasets have been uploaded on a shared Google Drive folder (https://drive.google.com/drive/folders/1t2bYdvcHNPQheHlmNWSSlvmu2JbSp4wc).
+Due to GitHub limitations on file size, the datasets have been uploaded on a shared [Google Drive folder](https://drive.google.com/drive/folders/1t2bYdvcHNPQheHlmNWSSlvmu2JbSp4wc).
 
 ### Dataset Balancing
 To address class imbalances and differences across datasets, we manipulated the data using `Dataset_Balancing.py`. This resulted in six balanced datasets:
